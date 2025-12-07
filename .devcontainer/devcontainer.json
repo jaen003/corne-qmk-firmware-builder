@@ -1,0 +1,19 @@
+{
+	"name": "Development environment",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	"runArgs": [
+		"--name=corne_qmk_firmware_builder"
+	],
+	"remoteUser": "vscode",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.makefile-tools"
+			]
+		}
+	}
+}
