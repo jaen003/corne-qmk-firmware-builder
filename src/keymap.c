@@ -50,7 +50,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
   CTL_T(KC_ESC), ES_MINS,    KC_Q,    KC_J,    KC_K,    KC_X,                         KC_B,    KC_M,    KC_W,    KC_V,    KC_Z, RCTL_T(KC_DEL),
     //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                            KC_LALT,  KC_SPC, LYR1_CK,     LYR2_CK,  KC_ENT, KC_RALT
+                                    KC_LGUI,  LALT_T(KC_SPC), LYR1_CK,     LYR2_CK,  RALT_T(KC_ENT), XXXXXXX
                                         //`--------------------------'  `--------------------------'
   ),
 
@@ -148,11 +148,11 @@ void lock_layer(void) {
 }
 
 const uint16_t PROGMEM caps_lock_combo[] = {KC_LSFT, KC_RSFT, COMBO_END};
-const uint16_t PROGMEM win_v_combo[] = {KC_LALT, KC_V, COMBO_END};
+const uint16_t PROGMEM quit_window_combo[] = {RCTL_T(KC_DEL), KC_Q, COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(caps_lock_combo, KC_CAPS),
-    COMBO(win_v_combo, LGUI(KC_V)) 
+    COMBO(quit_window_combo, LALT(KC_F4))
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -161,7 +161,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 switch_computer();
             }
-            break;
+            return false;
         case LYRLCK_CK:
             if (record->event.pressed) {
                 lock_layer();
@@ -169,17 +169,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case LYR1_CK:
             is_layer_one_pressed = record->event.pressed;
-            break;
+            try_switch_layer();
+            return false;
         case LYR2_CK:
             is_layer_two_pressed = record->event.pressed;
-            break;
+            try_switch_layer();
+            return false;
         case KPAWK_CK:
             if (record->event.pressed) {
                 is_keep_awake_task_enabled = !is_keep_awake_task_enabled;
             }
             return false;
     }
-    try_switch_layer();
     return true;
 }
 
