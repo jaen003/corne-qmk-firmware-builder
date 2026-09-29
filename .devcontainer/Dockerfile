@@ -6,11 +6,12 @@ ARG QMK_HOME=/home/${USERNAME}/qmk_firmware
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update \
-    && apt-get install -y --no-install-recommends git openssh-client make gcc-avr avr-libc \
+    && apt-get install -y --no-install-recommends git openssh-client sudo make gcc-avr avr-libc \
         binutils-avr avrdude dfu-programmer dfu-util python3 python3-pip
 RUN groupadd -g ${GID} ${USERNAME} \
     && useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USERNAME} \
-    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
+    && chmod 440 /etc/sudoers.d/${USERNAME}
 USER ${USERNAME}
 ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
 RUN git clone --depth=1 https://github.com/qmk/qmk_firmware.git ${QMK_HOME}
