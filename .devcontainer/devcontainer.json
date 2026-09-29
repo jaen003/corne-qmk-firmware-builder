@@ -7,7 +7,9 @@
 	"runArgs": [
 		"--name=corne_qmk_firmware_builder"
 	],
+	"workspaceFolder": "/workspace",
 	"remoteUser": "vscode",
+	"updateRemoteUserUID": true,
 	"customizations": {
 		"vscode": {
 			"extensions": [

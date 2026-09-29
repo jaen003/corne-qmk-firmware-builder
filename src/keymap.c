@@ -92,15 +92,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void switch_computer(void) {
-    SEND_STRING(SS_DOWN(X_LCTL) SS_DOWN(X_LSFT) SS_DOWN(X_LALT));
-    SEND_STRING(SS_UP(X_LALT) SS_UP(X_LSFT) SS_UP(X_LCTL));
-    SEND_STRING(SS_TAP(X_LCTL) SS_TAP(X_LCTL));
+    register_code(KC_LCTL);
+    register_code(KC_LSFT);
+    register_code(KC_LALT);
+    unregister_code(KC_LALT);
+    unregister_code(KC_LSFT);
+    unregister_code(KC_LCTL);
+    tap_code(KC_LCTL);
+    tap_code(KC_LCTL);
     if (current_computer == 1) {
         current_computer = 2;
-        SEND_STRING(SS_TAP(X_2));
+        tap_code(KC_2);
     } else {
         current_computer = 1;
-        SEND_STRING(SS_TAP(X_1));
+        tap_code(KC_1);
     }
 }
 
@@ -189,4 +194,39 @@ void matrix_scan_user(void) {
         tap_code(KC_F24);
         keep_awake_timer = timer_read32();
     }
+}
+
+bool oled_task_user(void) {
+    if (!is_keyboard_master()) {
+        return true;    
+    }
+    oled_set_cursor(0, 0);
+    oled_write_P(PSTR("PC: "), false);
+    oled_write_char('0' + current_computer, false);
+    oled_write_ln_P(PSTR(""), false);
+    oled_write_P(PSTR("Layer: "), false);
+    switch (get_highest_layer(layer_state)) {
+        case 0:
+            oled_write_P(PSTR("Default"), false);
+            break;
+        case 1:
+            oled_write_P(PSTR("Lower"), false);
+            break;
+        case 2:
+            oled_write_P(PSTR("Raise"), false);
+            break;
+        case 3:
+            oled_write_P(PSTR("Adjust"), false);
+            break;
+        default:
+            oled_write_P(PSTR("Unknown"), false);
+    }
+    oled_write_ln_P(PSTR(""), false);
+    oled_write_P(PSTR("KA: "), false);
+    if (is_keep_awake_task_enabled) {
+        oled_write_ln_P(PSTR("On"), false);
+    } else {
+        oled_write_ln_P(PSTR("Off"), false);
+    }
+    return false;
 }
